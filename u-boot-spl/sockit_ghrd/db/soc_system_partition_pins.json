@@ -1,0 +1,61 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "user_led_fpga[0]",
+					"strict" : false
+				},
+				{
+					"name" : "user_led_fpga[1]",
+					"strict" : false
+				},
+				{
+					"name" : "user_led_fpga[2]",
+					"strict" : false
+				},
+				{
+					"name" : "user_led_fpga[3]",
+					"strict" : false
+				},
+				{
+					"name" : "user_pb_fpga[0]",
+					"strict" : false
+				},
+				{
+					"name" : "user_pb_fpga[1]",
+					"strict" : false
+				},
+				{
+					"name" : "user_pb_fpga[2]",
+					"strict" : false
+				},
+				{
+					"name" : "user_pb_fpga[3]",
+					"strict" : false
+				},
+				{
+					"name" : "user_dipsw_fpga[0]",
+					"strict" : false
+				},
+				{
+					"name" : "user_dipsw_fpga[1]",
+					"strict" : false
+				},
+				{
+					"name" : "user_dipsw_fpga[2]",
+					"strict" : false
+				},
+				{
+					"name" : "user_dipsw_fpga[3]",
+					"strict" : false
+				},
+				{
+					"name" : "clk_bot1",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

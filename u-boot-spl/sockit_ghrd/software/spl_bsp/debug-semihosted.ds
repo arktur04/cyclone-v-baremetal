@@ -1,0 +1,75 @@
+#
+# Reset and stop the system.
+#
+#reset system
+stop
+#wait 30s
+
+#
+# Disable semihosting.
+#
+set semihosting enabled true
+
+#
+# Load the SPL preloader into memory.
+#
+#loadfile "$sdir/u-boot-spl.axf" 0x0
+#loadfile "$sdir/u-boot-spl" 0x0
+#loadfile "/home/user/ghrd-13-0-1/soc_system_20130421/software/spl_bsp/uboot-socfpga/spl/u-boot-spl" 0x0
+loadfile "/home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl" 0x0
+
+#
+# Enable semihosting.
+#
+#set semihosting enabled true
+#set debug-from *$entrypoint 
+#
+# Delete any existing breakpoints.
+#
+delete
+
+#
+# Set a breakpoint in the SPL function spl_boot_device(). This function is
+# called right before the SPL tries to load the next stage in the preloader.
+#
+tbreak spl_boot_device
+
+#
+# Set the PC to the entry point and go.
+#
+run
+
+#
+# Wait for the breakpoint.
+#
+#wait
+wait 60s
+
+# Create function to deassert fpga bridge reset
+define fpga_bridges_deassert_reset
+   print "FPGA Bridges: Deassert Reset"
+   set var $Peripherals::$reset_manager::$reset_manager_brgmodrst.hps2fpga = 0
+   set var $Peripherals::$reset_manager::$reset_manager_brgmodrst.lwhps2fpga = 0
+   set var $Peripherals::$reset_manager::$reset_manager_brgmodrst.fpga2hps = 0
+end
+
+# Deassert fpga bridge reset if the fpga is configured
+#if $Peripherals::$fpgamgrregs::$fpgamgrregs_stat!=0x0
+#   print "FPGA is Configured"
+#   fpga_bridges_deassert_reset
+#else
+#   print "FPGA is not Configured"
+#end
+
+
+#
+# Load the demo program.
+#
+#loadfile "$sdir/test.axf"
+loadfile "$sdir/gpio_demo.axf"
+set $pc=$entrypoint
+
+#
+# Run the target and break at main().
+#
+start
