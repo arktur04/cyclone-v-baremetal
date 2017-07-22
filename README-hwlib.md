@@ -1,4 +1,4 @@
-В оригинальной версии hwlib сщдержится ошибка в файле alt_generalpurpose_io.c в функции alt_gpio_port_int_status_clear.
+В оригинальной версии hwlib содержится ошибка в файле alt_generalpurpose_io.c в функции alt_gpio_port_int_status_clear.
 
 В оригинальной версии:
 ```
