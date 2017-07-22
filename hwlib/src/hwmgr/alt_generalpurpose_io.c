@@ -546,9 +546,9 @@ ALT_STATUS_CODE alt_gpio_port_int_status_clear(ALT_GPIO_PORT_t gpio_pid,
     volatile uint32_t   *addr;
 
     if (clrmask & ~ALT_GPIO_BITMASK)      { return ALT_E_ERROR; }
-    if (gpio_pid == ALT_GPIO_PORTA)      { addr = ALT_GPIO0_INTSTAT_ADDR; }
-    else if (gpio_pid == ALT_GPIO_PORTB) { addr = ALT_GPIO1_INTSTAT_ADDR; }
-    else if (gpio_pid == ALT_GPIO_PORTC) { addr = ALT_GPIO2_INTSTAT_ADDR; }
+    if (gpio_pid == ALT_GPIO_PORTA)      { addr = ALT_GPIO0_PORTA_EOI_ADDR; }
+    else if (gpio_pid == ALT_GPIO_PORTB) { addr = ALT_GPIO1_PORTA_EOI_ADDR; }
+    else if (gpio_pid == ALT_GPIO_PORTC) { addr = ALT_GPIO2_PORTA_EOI_ADDR; }
     else { return ALT_E_BAD_ARG; }         /* argument error */
 
     alt_write_word(addr, clrmask);

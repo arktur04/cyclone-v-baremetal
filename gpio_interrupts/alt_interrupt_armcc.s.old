@@ -1,0 +1,71 @@
+
+
+    PRESERVE8
+    AREA    VECTORS, CODE, READONLY
+
+    ENTRY
+
+    EXPORT alt_interrupt_vector
+    IMPORT __main
+    EXPORT alt_int_handler_irq [WEAK]
+
+alt_interrupt_vector
+
+Vectors
+    LDR PC, alt_reset_addr
+    LDR PC, alt_undef_addr
+    LDR PC, alt_svc_addr
+    LDR PC, alt_prefetch_addr
+    LDR PC, alt_abort_addr
+    LDR PC, alt_reserved_addr
+    LDR PC, alt_irq_addr
+    LDR PC, alt_fiq_addr
+
+alt_reset_addr    DCD alt_int_handler_reset
+alt_undef_addr    DCD alt_int_handler_undef
+alt_svc_addr      DCD alt_int_handler_svc
+alt_prefetch_addr DCD alt_int_handler_prefetch
+alt_abort_addr    DCD alt_int_handler_abort
+alt_reserved_addr DCD alt_int_handler_reserve
+alt_irq_addr      DCD alt_int_handler_irq
+alt_fiq_addr      DCD alt_int_handler_fiq
+
+alt_int_handler_reset
+    B __main
+alt_int_handler_undef
+    B alt_int_handler_undef
+alt_int_handler_svc
+    B alt_int_handler_svc
+alt_int_handler_prefetch
+    B alt_int_handler_prefetch
+alt_int_handler_abort
+    B alt_int_handler_abort
+alt_int_handler_reserve
+    B alt_int_handler_reserve
+alt_int_handler_irq
+    B alt_int_handler_irq
+alt_int_handler_fiq
+    B alt_int_handler_fiq
+
+
+
+    AREA ALT_INTERRUPT_ARMCC, CODE, READONLY
+
+    EXPORT alt_int_fixup_irq_stack
+
+
+alt_int_fixup_irq_stack FUNCTION
+
+
+    PUSH    {lr}
+    MOV     r4, sp
+    MSR     CPSR_c, #(0x12 :OR: 0x80 :OR: 0x40)
+    MOV     sp, r0
+    MSR     CPSR_c, #(0x1F :OR: 0x80 :OR: 0x40)
+    MOV     sp, r4
+    POP     {lr}
+    BX      lr
+
+    ENDFUNC
+
+    END
