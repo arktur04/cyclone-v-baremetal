@@ -1,59 +1,71 @@
 # cyclone-v-baremetal
 An example of a simple bare-metal application for the ARM Cortex A9 processor (Altera Cyclone V HPS)
 
-### Сборка bare-metal приложения для процессора ARM на плате SoCkit
+### Building a Bare-Metal Application on Intel Cyclone V for Absolute Beginners
 
-Все действия происходят в ОС Debian Jessie. Можно использовать Windows с соответствующими поправками.
+Setting up Linux on the development board like SocKit with a double-core ARM Cortex A9 is not rocket science. A manufacturer of the board supports the ready-to-use image, appropriate for installing on SD card or another media. But what if you are craving to touch bare metal, approaching a neck-breaking speed of code not restrained by an OS core? Well, it is possible, but not so easy and obvious. In this short essay, I'll give you step-by-step instruction, how to build and run you first bare-metal application on Cyclone V SoC, that uses ARM Cortex A9 core of the HPS subsystem of the SoC.
 
-### 1. Подготовка
+You need to have the development board with Intel (Altera) Cyclone V SoC. I used SoCKit board:
 
-1.1. Устанавливаем бесплатную DS-5 Altera Edition и полную DS-5 (при установке запускаем всё через sudo, пути установки вводим вручную). Пусть DS-5 Altera Edition установлена в папку /home/user/intelFPGA, полная DS-5 в папку /home/user/DS-5.
+I've been doing all the things described in this article in Debian Jessie. You can use other Linux system or Windows with corresponding changes.
 
-### 2. Запуск IDE
+And you need DS-5 IDE. And, unfortunately, free edition doesn't allow you to compile a bare-metal code. You need the full version.
 
-2.1. Запускаем сначала скрипт /home/user/intelFPGA/16.1/embedded/embedded_command_shell.sh, потом в том же окне терминала переходим в папку /home/user/DS-5/bin и запускаем IDE командой $ ./eclipse &.
-Запуск скрипта нужен для установки переменных окружения. Можно устанавливать переменные окружения при запуске системы, для этого нужно вписать в файл /home/user/.profile:
-export QUARTUS_ROOTDIR=/home/user/intelFPGA/16.1/qprogrammer
-export PATH=$PATH:/usr/local/gcc-arm-none-eabi-5_4-2016q3/bin/:/home/user/intelFPGA/16.1/embedded/host_tools/mentor/gnu/arm/baremetal/bin/
+### 1. Preparation
 
-? Возможно, понадобятся и другие переменные, например QSYS_ROOTDIR.
+1.1. Despite you have the full version of DS-5, you need to install the free DS-5 Altera Edition. Both versions must be installed in the sudo mode, in different directories, for example: */home/user/intelFPGA* for DS-5 Altera Edition, and */home/user/DS-5* for the full version of DS-5. You should enter paths by hand during the installation process.
 
-Также будет нужно запускать Quartus Prime и программатор Quartus. Quartus Prime: /home/user/intelFPGA/16.1/quartus/bin/quartus, программатор: /home/user/intelFPGA/16.1/qprogrammer/bin/quartus_pgmw.
+### 2. Running IDE
 
-### 3. Подключение SoCkit
+2.1. Firstly, run the script */home/user/intelFPGA/16.1/embedded/embedded_command_shell.sh*, then change a directory to */home/user/DS-5/bin* and run IDE:
+```sh 
+$ ./eclipse &
+```
+The script set environment variables. To set the variables when a system starts you should add the following line to the file */home/user/.profile*:
+```sh 
+QUARTUS_ROOTDIR=/home/user/intelFPGA/16.1/qprogrammer export PATH=$PATH:/usr/local/gcc-arm-none-eabi-5_4-2016q3/bin/:/home/user/intelFPGA/16.1/embedded/host_tools/mentor/gnu/arm/baremetal/bin/
+```
+If it is necessary, add a similar line for otter required variables, such as QSYS_ROOTDIR.
 
-3.1. Подключаем SoCkit к компьютеру к разъёмам USB Blaster (JTAG) и USB to UART.
+Also, you need to install and run Quartus Prime. Let's consider, that the installation directory of Quartus is */home/user/intelFPGA/16.1/quartus/*.
 
-3.2. Включаем плату и вводим команду:
+Run Quartus Prime, that is located at */home/user/intelFPGA/16.1/quartus/bin/quartus*, and it's JTAG programmer utility, located at */home/user/intelFPGA/16.1/qprogrammer/bin/quartus_pgmw*.
+
+### 3. Connecting the SoCkit
+
+3.1. Connect the SoCkit board to a computer. Connect microUSB cables to the ports of the board, named "USB Blaster (JTAG)" and "USB to UART".
+
+3.2. Switch the board on and enter:
 ```sh 
 $ ls /dev/bus/usb/001
  001  002  003
 ```
-То есть номер интерфейса JTAG - 003. Устанавливаем ему права записи:
+The last number (003) is an JTAG interface. Set permissions to writing:
 ```sh
  $ sudo chmod 666 /dev/bus/usb/001/003
 ```
-Это нужно делать после каждого включения платы.
+You have to do it every time you turn on the board.
 
-3.3. Настройка терминала TTY. В качестве терминала можно использовать, например, команду
+3.3. Setting the TTY terminal
+You can use this command:
 ```sh
 screen /dev/ttyUSB0 115200
 ```
-### 4. Сборка Preloader (u-boot-spl)
+### 4. Building the preloader (u-boot-spl)
 
-4.1. Скачать sockit_ghrd_16.0.tar.gz и распаковать в отдельную папку (например, /home/user/ghrd-16/sockit_ghrd).
+4.1. Download the file *sockit_ghrd_16.0.tar.gz* and unpack it. For example, unpack it to */home/user/ghrd-16/sockit_ghrd*.
 
-4.2. Запускаем quartus, открываем файл /home/user/ghrd-16/sockit_ghrd/soc_system.qpf.
+4.2. Run Quartus Prime and open file */home/user/ghrd-16/sockit_ghrd/soc_system.qpf*.
 
-4.3. Запускаем Qsys (Tools/Qsys). Открываем файл /home/user/ghrd-16/sockit_ghrd/soc_system.qsys. Выполняем команду Generate/Generate HDL. Выходим из Qsys.
+4.3. Run Qsys (Tools/Qsys). Open file */home/user/ghrd-16/sockit_ghrd/soc_system.qsys*. Do *Generate/Generate HDL* and quit Qsys.
 
-4.4. В quartus запускаем Assembler.
+4.4. Run Assembler in Quartus Prime.
 
-4.5. Запускаем bsp-editor: /home/user/intelFPGA/16.1/embedded/host_tools/altera/preloadergen/bsp-editor. Создаём новый проект: File/New HPS BSP. В поле Preloader setting directory указываем /home/user/ghrd-16/sockit_ghrd/hps_isw_handoff/soc_system_hps_0.
+4.5. Run bsp-editor: */home/user/intelFPGA/16.1/embedded/host_tools/altera/preloadergen/bsp-editor*. Create a new project: *File/New HPS BSP*. In the field "*Preloader setting directory*" write "*/home/user/ghrd-16/sockit_ghrd/hps_isw_handoff/soc_system_hps_0*".
 
-4.6. Выполняем настройки preloader. На вкладке Advanced: Watchdog_enable можно выключить, Semihosting можно включить, если мы хотим видеть отладочные сообщения через jtag.После настройки нажимаем Generate и выходим.
+4.6. Set up the Preloader. Go to the tab *Advanced*. Switch *Watchdog_enable* off. If you want to see debug messages through JTAG, you can switch on *Semihosting*. After this press *Generate* and quit.
 
-4.7. Можно изменить сообщения, выводимые на экран при загрузке. Например, в файле software/spl_bsp/uboot-socfpga/board/altera/socfpga/socfpga_cyclone5.c можно заменить надпись "BOARD : Altera SOCFPGA Cyclone V Board" на другую:
+4.7. It's possible to change the startup message. For example, in the file *software/spl_bsp/uboot-socfpga/board/altera/socfpga/socfpga_cyclone5.c* change the string "*BOARD: Altera SOCFPGA Cyclone V Board*" on another:
 ```c
 /*
  * Print Board information
@@ -70,22 +82,23 @@ int checkboard(void)
 }
 ```
 
-4.8. Переменная окружения SOCEDS_DEST_ROOT должна быть установлена в /home/user/intelFPGA/16.1/embedded. Если нет, то устанавливаем:
+4.8. The environment variable SOCEDS_DEST_ROOT must be set to */home/user/intelFPGA/16.1/embedded*:
 ```sh
 export SOCEDS_DEST_ROOT=/home/user/intelFPGA/16.1/embedded
 ```
-Переходим в папку /home/user/ghrd-16/sockit_ghrd/software/spl_bsp и запускаем make. Make может завершиться ошибкой "make: mkpimage: Команда не найдена", но должен быть собран файл u-boot-spl (/home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl).
-4.9. Проверка preloader-а
+Now go to the directory */home/user/ghrd-16/sockit_ghrd/software/spl_bsp* and do make. Make can fail with an error "*make: mkpimage: Command not found*", but it should build the *u-boot-spl* file in the path */home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl*.
 
-4.9.1. Для запуска preloader загружать конфигурацию fpga (файл .sof) не нужно. Запускаем DS-5. Открываем Run/Debug configurations.
+4.9. Testing the preloader
 
-4.9.2.В поле Connection должен быть установлен CV SoCKit 1-1. Если нет, нажимаем на Browse и устанавливаем. Если возникает ошибка, выполняем пп. 3.1-3.2.
+4.9.1. You don't need an FPGA image (which has a ".sof" extension) for running the preloader. Run DS-5, and open "*Run/Debug configurations*".
 
-4.9.3. На вкладке Files в поле Application on host to download указываем файл u-boot-spl: /home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl. Включаем галочку Load symbols. Поле Files оставляем пустым.
+4.9.2. In the field Connection should be set the CV SoCKit 1-1 option. If it's not so, press "*Browse*" button and set this option. If an error appears, do 3.1-3.2.
 
-4.9.4. На вкладке Debugger должен быть отключен запуск скрипта отладки.
+4.9.3. Set the file u-boot-spl on the Files tab, in the "*Application on host to download*" field: */home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl*. Set the flag "*Load symbols*". Remain the "*Files*" field empty.
 
-4.9.5. Запускаем терминал (screen) и нажимаем на кнопку Debug. Происходит загрузка preloader в память, и отладчик готов к запуску. Нажимаем кнопку Continue (F8), выводится сообщение:
+4.9.4. Switch off a debugging script launching on the Debugging tab.
+
+4.9.5. Run terminal utility (for example, screen) and press the "*Debug*" button. The preloader is loaded into memory and a debugger is ready to launch. Press the "*Continue*" button (or F8) and see the message:
 ```
 U-Boot SPL 2013.01.01 (Jun 24 2017 - 19:49:33)
 ARM preloader build by 32-bit.me
@@ -109,35 +122,35 @@ Card did not respond to voltage select!
 spl: mmc init failed: err - -17
 ### ERROR ### Please RESET the board ###
 ```
-Это означает, что preloader успешно запускается.
+It means that the preloader started successfully.
 
-4.9.6. После сеанса отладки нажать на кнопку Disconnect From Target и Remove Connection.
+4.9.6. After debugging session press buttons "*Disconnect From Target*" and "*Remove Connection*".
 
-### 5. Сборка примера Bare-Metal
+### 5. Write "Hello World" for the bare-metal mode
 
-5.1. Скачиваем проект ArrowSocKit_BareMetal_GNU.zip. Устанавливаем переменные окружения (п. 2.1), запускаем DS-5, импортируем проект из архива (File/Import/Existing Project into Workspace, Select archile file). Распакованный проект должен появиться в папке /home/user/DS-5-Workspace/BareMetalBoot-GNU.
+5.1. Download the project *ArrowSocKit_BareMetal_GNU.zip*. Set environment variables as in 2.1., run DS-5, import the project from the archive (File/Import/Existing Project into Workspace, Select archile file). The unpacked project appears in the directory /home/user/DS-5-Workspace/BareMetalBoot-GNU.
 
-5.2. Можно собрать проект командой make, однако он не будет собираться в исходном виде.
+5.2. You can try to build the project with make, but it can't be build yet. To build the project, do the following.
 
-5.3. Копируем папку /home/user/intelFPGA/16.1/embedded/ip/altera/hps/altera_hps/hwlib в /home/user/DS-5-Workspace/. В ней находятся папки src и include, в каждой из них есть папки soc_cv_av и soc_a10. Папки soc_a10 можно удалить. Также в папку проекта (/home/user/DS-5-Workspace/BareMetalBoot-GNU) нужно скопировать файлы libcs3.a, libcs3arm.a, libcs3unhosted.a из /home/user/intelFPGA/16.1/embedded/host_tools/mentor/gnu/arm/baremetal/arm-altera-eabi/lib. Скопировать arm-names.inc из /home/user/intelFPGA/16.1/embedded/host_tools/mentor/gnu/arm/baremetal/arm-altera-eabi/lib/cortex-a9/ в /home/user/DS-5-Workspace/BareMetalBoot-GNU/
+5.3. Copy the directory */home/user/intelFPGA/16.1/embedded/ip/altera/hps/altera_hps/hwlib* into */home/user/DS-5-Workspace/*. Here are folders src and include, and in each of them there are *soc_cv_av* and *soc_a10 directories*. You may remove directories named *soc_a10*. Then copy files *libcs3.a*, *libcs3arm.a*, *libcs3unhosted.a* from */home/user/intelFPGA/16.1/embedded/host_tools/mentor/gnu/arm/baremetal/arm-altera-eabi/lib* to the project directory (*/home/user/DS-5-Workspace/BareMetalBoot-GNU*). Copy the file *arm-names.inc* from */home/user/intelFPGA/16.1/embedded/host_tools/mentor/gnu/arm/baremetal/arm-altera-eabi/lib/cortex-a9/* to */home/user/DS-5-Workspace/BareMetalBoot-GNU/*.
 
-5.4. В Makefile меняем CROSS_COMPILE := arm-none-eabi- на CROSS_COMPILE := arm-altera-eabi-. Также меняем путь к hwlib: HWLIBS_ROOT := /home/user/DS-5-Workspace/hwlib
+5.4. In the Makefile change "*CROSS_COMPILE := arm-none-eabi-*" to "*CROSS_COMPILE := arm-altera-eabi-*". Also change the path to hlib: *HWLIBS_ROOT := /home/user/DS-5-Workspace/hwlib*
 
-5.5. Теперь запускаем make и читаем все сообщения об ошибках. Если make не находит какой-либо символ, то нужно найти его в папке hwlib/src/soc_cv_av и в hwlib/include/soc_cv_av и скопировать в hwlib/src и в hwlib/include соответственно. Готовый проект можно скачать в этом репозитории. После того, как все файлы будут найдены, make будет завершаться с ошибкой "mkimage: not found", но это неважно, так как нам нужен только файл test.axf.
+5.5. Now run make. and read all error messages. If make can't find some symbol, you should find it in directories *hwlib/src/soc_cv_av* and *hwlib/include/soc_cv_av*, and make a copy in *hwlib/src* and *hwlib/include* correspondingly. After you find all fules, make fails with the error "*mkimage: not found*", but it's not important, because we need only the *test.axf* file.
 
-5.6. Запуск приложения
+5.6. Running an application
 
-5.6.1. Для запуска приложения нужно загрузить конфигурацию fpga, которая была сгенерирована при сборке preloader (файл .sof). Запускаем программатор (п.2.1). Справа от кнопки Hardware Setup должна быть надпись: CV SoCKit [1-1]. Если её нет, нужно установить права записи на порт jtag (см. выше) и нажать на Hardware Setup.
+5.6.1. To run an application it is necessary to load an FPGA image (.sof file), that was generated when we've built the preloader. Run the programmer as we did in 2.1. There must be the text "*CV SoCKit [1-1]*" to the right of the bottom "*Hardware Setup*". If there isn't, you should set the write permission for the JTAG port (see above) and click the *Hardware Setup* button.
 
-5.6.2. Нажать на Auto Detect, можно указать произвольный пункт в окне. Появится конфигурация из двух устройств: указанного (например, 5CSEBA6) и SOCVHPS. Удаляем первое устройство (выделить и нажать Delete). Нажимаем кнопку Add File и открываем файл конфигурации (/home/user/ghrd-16/sockit_ghrd/output_files/soc_system.sof). Справа от SOCVHPS появляется новое устройство. Его нужно переместить мышью на первое место в цепочке. После этого нажимаем Start и прошиваем устройство.
+5.6.2. Click *Auto Detect* and select an arbitrary option from a list. You see a configuration of two devices: one is what you've selected (for example, 5CSEBA6) and the second is SOCVHPS. Remove the first device: select it and press Delete. Press "*Add File*" and open the image file (*/home/user/ghrd-16/sockit_ghrd/output_files/soc_system.sof*). A new device appeared to the right of SOCVHPS. Move it with a mouse to the first place in the chain. After this, press Start and upload the image.
 
-5.6.3. В DS-5 открываем Debug Configuration, вкладку Files. В строке Application on host to download указываем файл u-boot-spl, который мы скомпилировали ранее. Галочку Load Symbols убираем. В строке Files указываем файл test.axf. На вкладке Debugger ставим галку на пункте Run target initialization debugger script и указываем скрипт debug-unhosted.ds в папке проекта. В самом файле редактируем путь к preloader:
+5.6.3. In DS-5 open "*Debug Configuration*" on the "*Files*" tab. Set the file *u-boot-spl* on the line "*Application on host to download*". Remove a mark at "*Load Symbols*". Set the file "*test.axf*" at the line "*Files*". On the Debugger tab check the "*Run target initialization debugger script*" and set the script file "*debug-unhosted.ds*", located in th project directory. In the file edit the path to the preloader:
 ```
 # Load the SPL preloader into memory.
 #
 loadfile "/home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl" 0x0
 ```
-Запускаем терминал TTY (screen) и нажимаем Debug, запускается сначала preloader, затем загружается приложение и дебаггер устанавливается на начало программы. Нажимаем кнопку запуска (Continue). В окне терминала должен быть вывод preloader (см. выше), а затем следующее:
+Run the TTY terminal screen and press Debug. Then the preloader will start, an application will be uploaded, and a debugger will be set on a start point of the program. Press "*Continue*" button. In a window of a terminal you will see preloader's output, as was shown above, then the following:
 ```
 Disabled interrupts because preloader enabled ECC interrupts.
 Global Timer value at startup = 0x000000005A10B609
@@ -177,3 +190,4 @@ interrupts enabled : 0x000000005A65D0D7 :      1.388us :  24118.582us
           complete : 0x000000005A661222 :      0.467us :  24190.863us
 Hello world, 32bit-me!
 ```
+Congratulations! You've just run your first bare-metal application on the Cortex-A9 core.
