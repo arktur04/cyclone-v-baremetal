@@ -1,6 +1,6 @@
-В оригинальной версии hwlib содержится ошибка в файле alt_generalpurpose_io.c в функции alt_gpio_port_int_status_clear.
+The original **hwlib** variant contains a mistake in the file **alt_generalpurpose_io.c** in the function **alt_gpio_port_int_status_clear**.
 
-В оригинальной версии:
+In the original variant:
 ```
 ALT_STATUS_CODE alt_gpio_port_int_status_clear(ALT_GPIO_PORT_t gpio_pid,
         uint32_t clrmask)
@@ -18,7 +18,7 @@ ALT_STATUS_CODE alt_gpio_port_int_status_clear(ALT_GPIO_PORT_t gpio_pid,
 }
 ```
 
-Должно быть:
+Must be:
 ```
 uint32_t alt_gpio_port_int_status_get(ALT_GPIO_PORT_t gpio_pid)
 {

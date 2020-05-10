@@ -1,3 +1,3 @@
-timers - пример работы с прерыванием таймера (мигание светодиодом)
+timers - the example of handling a timer interrupt (LED flashing)
 
-gpio_interrupts - пример работы с gpio по прерываниям (кнопка включает/выключает светодиод)
+gpio_interrupts - the example of handling GPIO interrupt (a button turns on/off LED)
