@@ -151,5 +151,5 @@ It means that the preloader started successfully.
 loadfile "/home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl" 0x0
 ```
 Run the TTY terminal screen and press Debug. Then the preloader will start, an application will be uploaded, and a debugger will be set on a start point of the program. Press "*Continue*" button. In a window of a terminal you will see preloader's output, as was shown above, then the following:
-[output](108519_original.png)
+![output](108519_original.png)
 Congratulations! You've just run your first bare-metal application on the Cortex-A9 core.
