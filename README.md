@@ -151,43 +151,5 @@ It means that the preloader started successfully.
 loadfile "/home/user/ghrd-16/sockit_ghrd/software/spl_bsp/uboot-socfpga/spl/u-boot-spl" 0x0
 ```
 Run the TTY terminal screen and press Debug. Then the preloader will start, an application will be uploaded, and a debugger will be set on a start point of the program. Press "*Continue*" button. In a window of a terminal you will see preloader's output, as was shown above, then the following:
-```
-Disabled interrupts because preloader enabled ECC interrupts.
-Global Timer value at startup = 0x000000005A10B609
-CPU frequency is 925000000 hertz.
-DDR frequency is 400000000 hertz.
-MPU peripheral frequency is 231250000 hertz.
-MB ZERO remapped to SDRAM.
-L3 interconnect remapped as inaccessible and SDRAM.
-Interrupt controller system API initialized.
-MMU initialized and enabled.
-L1 and L2 cache system initialized and enabled.
-GIC interrupts enabled.
-PIT started.
-PIT interrupt registered and enabled.
-GPIOs initialized.
-UART0 initialized.
-L3 interconnect remapped as accessible and SDRAM.
-Bridges initialized.
-Boot completed.
-
-Boot milestones:
-New buffer !ESTONE :       GT TICKCOUNT :  INCREMENTAL :   CUMULATIVE
-        initial GT : 0x000000005A10B609 :      0.000us :      0.000us
- frequency capture : 0x000000005A119D58 :    256.065us :    256.065us
- initial remapping : 0x000000005A11C936 :     48.562us :    304.627us
-interrupt sys init : 0x000000005A139FED :    521.094us :    825.721us
-          mmu init : 0x000000005A62D774 :  22449.985us :  23275.706us
-        cache init : 0x000000005A65CF96 :    841.488us :  24117.194us
-interrupts enabled : 0x000000005A65D0D7 :      1.388us :  24118.582us
-         pit start : 0x000000005A65DD2E :     13.661us :  24132.242us
-       pit enabled : 0x000000005A65DF67 :      2.461us :  24134.703us
-         gpio init : 0x000000005A65FC12 :     31.736us :  24166.439us
-        uart0 init : 0x000000005A66084D :     13.539us :  24179.978us
-       fpga config : 0x0000000000000000 : 79769704095969360.000us : 79769704095993552.000us
-    last remapping : 0x000000005A660981 : 6558428.303us :  24181.310us
-       bridge init : 0x000000005A6611B6 :      9.085us :  24190.396us
-          complete : 0x000000005A661222 :      0.467us :  24190.863us
-Hello world, 32bit-me!
-```
+[output](108519_original.png)
 Congratulations! You've just run your first bare-metal application on the Cortex-A9 core.
