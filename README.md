@@ -7,6 +7,8 @@ Setting up Linux on the development board like SocKit with a double-core ARM Cor
 
 You need to have the development board with Intel (Altera) Cyclone V SoC. I used SoCKit board:
 
+![board photo](https://github.com/arktur04/cyclone-v-baremetal/x5twrba2tlvz68fuwltzjsak2ds.jpeg)
+
 I've been doing all the things described in this article in Debian Jessie. You can use other Linux system or Windows with corresponding changes.
 
 And you need DS-5 IDE. And, unfortunately, free edition doesn't allow you to compile a bare-metal code. You need the full version.
